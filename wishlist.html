@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h2 class="mb-0 fw-bold" style="color: #FFE88C;">Your Wishlist</h2>
+            <a href="/" class="btn btn-sm rounded-pill" style="background: rgba(153,0,0,0.4); color: #FFE5CC; border: 1px solid rgba(230,184,0,0.5);"><i class="fa-solid fa-arrow-left me-1"></i> Continue Shopping</a>
+        </div>
+
+        <div class="rounded p-4 shadow-sm" style="background: rgba(60,10,10,0.55); backdrop-filter: blur(12px); border: 1px solid rgba(230,184,0,0.5);">
+            {% if items %}
+                {% for item in items %}
+                <div class="row align-items-center mb-3 pb-3 border-bottom position-relative">
+                    
+                    <div class="col-sm-2 text-center position-relative">
+                        <img src="https://tse2.mm.bing.net/th?q={{ item.name | replace(' ', '+') }}+product+isolated" class="product-image img-fluid rounded border shadow-sm" style="object-fit: contain;">
+                        {% if item.discount > 0 %}
+                            <div class="position-absolute top-0 start-0 m-1 badge" style="background-color: #CC0C39; font-size: 0.65rem;">-{{ item.discount }}%</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="col-sm-6 text-sm-start text-center mt-3 mt-sm-0 px-md-4">
+                        <h5 class="mb-1" style="color: #FFE88C;">{{ item.name }}</h5>
+                        <div class="text-success fw-bold small mb-2">In Stock</div>
+                        
+                        <div class="mb-2" style="color: #FFA41C; font-size: 0.85rem;">
+                            {% set rating_int = item.rating|int %}
+                            {% for _ in range(rating_int) %}<i class="fa-solid fa-star"></i>{% endfor %}
+                            {% if item.rating - rating_int >= 0.5 %}<i class="fa-solid fa-star-half-stroke"></i>{% endif %}
+                            <span class="text-primary ms-1"><i class="fa-solid fa-angle-down text-muted small"></i> {{ item.reviews }}</span>
+                        </div>
+
+                        {% if item.discount > 0 %}
+                            {% set actual_price = item.price * (1 - item.discount/100) %}
+                            <span class="fs-5 fw-bold me-2" style="color: #FFD700;">₹{{ "%.0f"|format(actual_price) }}</span>
+                            <span class="text-muted text-decoration-line-through small">₹{{ item.price }}</span>
+                        {% else %}
+                            <span class="fs-5 fw-bold" style="color: #FFD700;">₹{{ "%.0f"|format(item.price) }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="col-sm-4 text-sm-end text-center mt-3 mt-sm-0 d-flex flex-column gap-2">
+                        {% if item.id in cart_ids %}
+                            <a href="/cart" class="btn w-100 rounded-pill btn-sm shadow-sm fw-medium" style="background: rgba(153,0,0,0.4); color: #FFE5CC; border: 1px solid rgba(230,184,0,0.5);">View in Cart</a>
+                        {% else %}
+                            <a href="/add/{{ item.id }}" class="btn btn-dhukandhar w-100 rounded-pill btn-sm shadow-sm"><i class="fa-solid fa-cart-plus me-1"></i> Add to Cart</a>
+                        {% endif %}
+                        <a href="/wishlist/toggle/{{ item.id }}" class="text-danger small text-decoration-none fw-medium"><i class="fa-solid fa-trash me-1"></i>Remove</a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fa-solid fa-heart-crack text-muted mb-3" style="font-size: 5rem; opacity: 0.5;"></i>
+                    <h4 class="fw-bold" style="color: #FFE88C;">Your Wishlist is empty</h4>
+                    <p class="text-muted">Save items you like here to keep track of them.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

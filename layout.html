@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DHUKANDHAR Cart Simulation | Blood Red & Gold Glass</title>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* ============================================
+           BLOOD RED + ENHANCED GOLD + GLASS THEME
+           No white, no black – only crimson, royal gold, glass texture
+           Increased gold | Improved text visibility & catchiness
+           EXTRA: checkout, billing, payment visibility boost
+        ============================================ */
+        :root {
+            --blood-primary: #E60000;
+            --blood-deep: #990000;
+            --blood-glow: #FF1A1A;
+            --royal-gold: #E6B800;
+            --gold-bright: #FFE066;
+            --gold-intense: #FFD700;
+            --glass-bg: rgba(153, 0, 0, 0.3);
+            --glass-border: rgba(230, 0, 0, 0.6);
+            --glass-border-strong: rgba(230, 0, 0, 0.85);
+            --text-light: #FFF0E0;
+            /* brighter, warmer */
+            --text-gold: #FFE88C;
+            --text-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Remove any white/black remnants */
+        body,
+        .navbar,
+        .card,
+        .alert,
+        input,
+        button,
+        footer,
+        .card-header,
+        .card-body {
+            background-color: transparent !important;
+        }
+
+        body {
+            background-color: #1a0101;
+            background-image: url("/static/bg.jpg");
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-attachment: fixed;
+            background-size: cover;
+            font-family: 'Inter', sans-serif;
+            padding-top: 130px;
+            /* Increased to accommodate dual navbars */
+            color: var(--text-light);
+            position: relative;
+            font-weight: 500;
+            text-shadow: var(--text-shadow);
+            animation: bgSlideShow 24s infinite;
+        }
+
+        @keyframes bgSlideShow {
+
+            0%,
+            20% {
+                background-image: url("/static/bg.jpg");
+            }
+
+            25%,
+            45% {
+                background-image: url("/static/001.jpg");
+            }
+
+            50%,
+            70% {
+                background-image: url("/static/002.jpg");
+            }
+
+            75%,
+            95% {
+                background-image: url("/static/003.jpg");
+            }
+
+            100% {
+                background-image: url("/static/bg.jpg");
+            }
+        }
+
+        /* Crazy hide-ui feature to bring bg forward */
+        body.hide-ui>*:not(script):not(style):not(#bgReturnToast) {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            transform: scale(0.97);
+        }
+
+        body.hide-ui {
+            cursor: pointer;
+        }
+
+        body.hide-ui::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 99998;
+            cursor: pointer;
+        }
+
+        body>*:not(script):not(style) {
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+
+        /* "Click to return" floating toast */
+        #bgReturnToast {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: rgba(30, 5, 5, 0.92);
+            backdrop-filter: blur(16px);
+            border: 2px solid var(--royal-gold);
+            color: #FFE88C;
+            font-weight: 800;
+            font-size: 1rem;
+            padding: 14px 36px;
+            border-radius: 50px;
+            z-index: 99999;
+            pointer-events: none;
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 30px rgba(230, 184, 0, 0.5);
+            letter-spacing: 1px;
+        }
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Deep red + intense gold ambient glow */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at 20% 30%, rgba(230, 0, 0, 0.22), transparent 55%),
+                radial-gradient(circle at 80% 70%, rgba(230, 184, 0, 0.28), transparent 50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Logo text – catchy gold shimmer */
+        @keyframes goldShimmer {
+            0% {
+                background-position: 0%
+            }
+
+            100% {
+                background-position: 200%
+            }
+        }
+
+        .logo-text-enhanced {
+            background: linear-gradient(90deg, #FFD700, #E60000, #FFE88C, #E6B800, #FFD700);
+            background-size: 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: goldShimmer 3s linear infinite;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+        /* DHUKANDHAR PHOTO LOGO – circular gold glow */
+        .dhukandhar-logo-img {
+            border-radius: 50%;
+            border: 2.5px solid #E6B800;
+            box-shadow: 0 0 12px #E60000, 0 0 22px rgba(230, 184, 0, 0.7);
+            object-fit: cover;
+            transition: box-shadow 0.25s, transform 0.25s;
+        }
+
+        .dhukandhar-logo-img:hover {
+            box-shadow: 0 0 20px #FF3333, 0 0 40px #FFD700;
+            transform: scale(1.08) rotate(-3deg);
+        }
+
+        /* Glass navigation bars – gold borders */
+        .navbar-main {
+            background: rgba(20, 2, 2, 0.95);
+            /* Slightly more opaque for better separation */
+            backdrop-filter: blur(14px);
+            border-bottom: 2px solid var(--royal-gold);
+            box-shadow: 0 0 35px rgba(230, 0, 0, 0.5);
+            min-height: 72px;
+            z-index: 1050;
+            /* Higher priority */
+        }
+
+        .navbar-sub {
+            background: rgba(25, 3, 3, 0.88);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--royal-gold);
+            top: 72px;
+            margin-top: 2px;
+            /* Push below the main navbar's 2px border */
+            z-index: 1040;
+        }
+
+        /* Responsive navbar — prevent category from overlapping header */
+        @media (min-width: 992px) {
+            body {
+                padding-top: 140px; /* Increased for breathing room */
+            }
+
+            .navbar-sub {
+                top: 72px;
+            }
+        }
+
+        @media (max-width: 991px) {
+            body {
+                padding-top: 150px;
+            }
+
+            .navbar-sub {
+                top: 72px;
+            }
+
+            /* collapsed navbar stays contained */
+            #navbarNav.collapsing,
+            #navbarNav.show {
+                background: rgba(20, 2, 2, 0.97);
+                border: 1px solid rgba(230, 184, 0, 0.4);
+                border-radius: 0 0 16px 16px;
+                padding: 10px 15px;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 160px;
+            }
+
+            .navbar-sub {
+                top: 72px;
+            }
+        }
+
+        /* Glass nav links – catchy hover */
+        .nav-link-custom {
+            color: var(--text-light) !important;
+            font-weight: 700;
+            border-radius: 40px;
+            padding: 8px 16px;
+            transition: 0.2s;
+            border: 1px solid transparent;
+            text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-link-custom:hover {
+            background: rgba(230, 0, 0, 0.4);
+            border-color: var(--gold-bright);
+            color: #FFF5E6 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 0 18px rgba(230, 184, 0, 0.6);
+            text-shadow: 0 0 6px #E6B800;
+        }
+
+        /* Glass search bar – gold dominant */
+        .search-bar-group {
+            border-radius: 50px;
+            overflow: hidden;
+            border: 1.5px solid var(--royal-gold);
+            background: rgba(40, 5, 5, 0.7);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 0 20px rgba(230, 184, 0, 0.35);
+            transition: 0.2s;
+        }
+
+        .search-bar-group:focus-within {
+            border-color: var(--gold-intense);
+            box-shadow: 0 0 32px rgba(230, 0, 0, 0.65);
+        }
+
+        .search-bar-group select,
+        .search-bar-group input {
+            background: rgba(20, 2, 2, 0.85) !important;
+            color: #FFF0E0 !important;
+            border: none;
+            font-weight: 500;
+        }
+
+        .search-bar-group select {
+            border-right: 1px solid var(--royal-gold) !important;
+        }
+
+        .search-bar-group input::placeholder {
+            color: #E6B888;
+            font-weight: 400;
+        }
+
+        .search-bar-group button {
+            background: linear-gradient(135deg, #E60000, #990000);
+            color: #FFE066;
+            width: 54px;
+            font-weight: bold;
+        }
+
+        .search-bar-group button:hover {
+            background: linear-gradient(135deg, #FF3333, #E60000);
+            color: #FFF0B5;
+        }
+
+        /* Glass cart badge – gold pulse with catchy text */
+        .cart-badge {
+            background: linear-gradient(135deg, #E60000, #990000);
+            color: #FFE88C !important;
+            font-weight: 800;
+            box-shadow: 0 0 14px #E6B800;
+            animation: badgePulse 1.5s infinite;
+            text-shadow: 0 0 4px #990000;
+        }
+
+        @keyframes badgePulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 6px #E6B800;
+            }
+
+            50% {
+                transform: scale(1.15);
+                box-shadow: 0 0 28px #FFD700;
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 6px #E6B800;
+            }
+        }
+
+        /* Glass alert messages – catchy */
+        .alert {
+            background: rgba(40, 5, 5, 0.92);
+            backdrop-filter: blur(12px);
+            border-left: 5px solid var(--royal-gold);
+            color: #FFF0E0;
+            border-radius: 18px;
+            font-weight: 600;
+            text-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-close-white {
+            filter: invert(0) sepia(1) saturate(10) hue-rotate(320deg) brightness(1.2);
+        }
+
+        /* Glass form elements – gold focus (global) */
+        input.form-control,
+        textarea.form-control,
+        .form-select {
+            background: rgba(25, 3, 3, 0.85) !important;
+            color: #FFF0E0 !important;
+            border: 1px solid rgba(230, 184, 0, 0.6) !important;
+            border-radius: 14px;
+            font-weight: 500;
+        }
+
+        input.form-control:focus {
+            box-shadow: 0 0 0 3px rgba(230, 184, 0, 0.45);
+            border-color: var(--gold-intense) !important;
+        }
+
+        /* ============================================
+           🛒 CHECKOUT, BILLING & PAYMENT - IMPROVED VISIBILITY
+           Glassmorphism with high contrast gold text
+        ============================================ */
+        /* Checkout container, billing section, payment methods */
+        .checkout-container,
+        .billing-section,
+        .payment-methods,
+        .order-summary,
+        [class*="checkout"],
+        [class*="billing"],
+        [class*="payment"],
+        .cart-summary,
+        .checkout-form {
+            background: rgba(30, 8, 8, 0.65) !important;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(230, 184, 0, 0.55);
+            border-radius: 28px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #FFF5E6;
+            text-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Headings inside checkout/billing */
+        .checkout-container h1,
+        .checkout-container h2,
+        .checkout-container h3,
+        .billing-section h1,
+        .billing-section h2,
+        .billing-section h3,
+        .payment-methods h1,
+        .payment-methods h2,
+        .payment-methods h3,
+        .order-summary h1,
+        .order-summary h2,
+        .order-summary h3,
+        [class*="checkout"] h1,
+        [class*="checkout"] h2,
+        [class*="checkout"] h3,
+        [class*="billing"] h1,
+        [class*="billing"] h2,
+        [class*="billing"] h3,
+        [class*="payment"] h1,
+        [class*="payment"] h2,
+        [class*="payment"] h3 {
+            color: #FFE88C !important;
+            font-weight: 800;
+            letter-spacing: -0.2px;
+            border-bottom: 1px solid rgba(230, 184, 0, 0.5);
+            display: inline-block;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 8px #990000;
+        }
+
+        /* Labels in forms – high visibility */
+        .checkout-container label,
+        .billing-section label,
+        .payment-methods label,
+        [class*="checkout"] label,
+        [class*="billing"] label,
+        [class*="payment"] label {
+            color: #FFE0B5 !important;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: block;
+            text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Input fields inside checkout – extra glass */
+        .checkout-container input,
+        .checkout-container select,
+        .checkout-container textarea,
+        .billing-section input,
+        .billing-section select,
+        .billing-section textarea,
+        .payment-methods input,
+        .payment-methods select,
+        [class*="checkout"] input,
+        [class*="checkout"] select,
+        [class*="billing"] input,
+        [class*="billing"] select,
+        [class*="payment"] input,
+        [class*="payment"] select {
+            background: rgba(15, 3, 3, 0.9) !important;
+            border: 1px solid var(--royal-gold) !important;
+            color: #FFF5E6 !important;
+            border-radius: 16px;
+            padding: 10px 15px;
+            font-weight: 500;
+        }
+
+        .checkout-container input:focus,
+        .billing-section input:focus,
+        .payment-methods input:focus {
+            box-shadow: 0 0 0 3px rgba(230, 184, 0, 0.5);
+            border-color: var(--gold-intense) !important;
+        }
+
+        /* Payment method cards / radio groups */
+        .payment-method-card,
+        .payment-option {
+            background: rgba(153, 0, 0, 0.25);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(230, 184, 0, 0.45);
+            border-radius: 20px;
+            padding: 12px 18px;
+            margin-bottom: 12px;
+            transition: 0.2s;
+        }
+
+        .payment-method-card:hover,
+        .payment-option:hover {
+            background: rgba(153, 0, 0, 0.4);
+            border-color: var(--gold-bright);
+        }
+
+        /* Order summary table / items */
+        .order-summary table,
+        .cart-summary table {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            color: #FFF0E0;
+        }
+
+        .order-summary th,
+        .cart-summary th {
+            color: #FFE066;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(230, 184, 0, 0.5);
+        }
+
+        .order-summary td,
+        .cart-summary td {
+            color: #FFF0E0;
+            font-weight: 500;
+            border-color: rgba(230, 184, 0, 0.3);
+        }
+
+        /* Checkout button – prominent gold */
+        .checkout-btn,
+        .place-order-btn,
+        .btn-primary.checkout {
+            background: linear-gradient(90deg, #E60000, #B22222);
+            color: #FFE88C !important;
+            font-weight: 800;
+            border: 1px solid var(--royal-gold);
+            border-radius: 40px;
+            padding: 12px 28px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.2s;
+        }
+
+        .checkout-btn:hover,
+        .place-order-btn:hover,
+        .btn-primary.checkout:hover {
+            background: linear-gradient(90deg, #FF3333, #E60000);
+            box-shadow: 0 0 28px rgba(230, 184, 0, 0.7);
+            color: #FFF5CC;
+            transform: scale(1.02);
+        }
+
+        /* Error/success messages inside checkout */
+        .checkout-container .alert,
+        .billing-section .alert,
+        .payment-methods .alert {
+            background: rgba(40, 5, 5, 0.95);
+            border-left-color: var(--gold-intense);
+            color: #FFE5CC;
+        }
+
+        /* ===== End of checkout/billing/payment visibility improvements ===== */
+
+        /* Links – catchy gold */
+        a {
+            color: var(--gold-bright);
+            transition: 0.2s;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #FFE88C;
+            text-shadow: 0 0 8px #E60000;
+        }
+
+        /* Footer glass – gold accents */
+        footer {
+            box-shadow: 0 -5px 30px rgba(230, 184, 0, 0.35);
+        }
+
+        footer div:first-child {
+            background: rgba(30, 5, 5, 0.94) !important;
+            backdrop-filter: blur(10px);
+            color: var(--gold-bright);
+            border-top: 1px solid var(--royal-gold);
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        footer div:last-child {
+            background: rgba(15, 2, 2, 0.97) !important;
+            backdrop-filter: blur(8px);
+            border-top-color: var(--royal-gold);
+        }
+
+        /* Glass cards – improved text contrast */
+        .card {
+            background: transparent !important;
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(230, 184, 0, 0.6);
+            border-radius: 24px;
+            color: #FFF5E6;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--gold-intense);
+            box-shadow: 0 12px 40px rgba(230, 0, 0, 0.5);
+            transform: translateY(-4px);
+        }
+
+        .card-title {
+            color: #FFE88C;
+            font-weight: 800;
+            text-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+            letter-spacing: -0.3px;
+        }
+
+        .card-text {
+            color: #FFF0E0;
+            font-weight: 500;
+            text-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 🔥 PRODUCT IMAGES – STAND OUT ON GLASS BACKGROUND 🔥 */
+
+        /* Frosted glass container behind each product image */
+        .card .position-relative,
+        .card .d-flex.justify-content-center {
+            background: transparent !important;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            border-radius: 20px 20px 0 0;
+            overflow: hidden;
+            border-bottom: 1px solid rgba(230, 184, 0, 0.35);
+            box-shadow: inset 0 0 40px rgba(230, 184, 0, 0.08);
+        }
+
+        /* Product images: removing white block backgrounds visually */
+        .card img,
+        .product-image,
+        [class*="product-img"],
+        .card .card-img-top,
+        .card .product-icon,
+        .glassy-product {
+            border-radius: 16px;
+            object-fit: contain;
+            /* ensures images fit nicely */
+            filter: drop-shadow(0 4px 14px rgba(230, 0, 0, 0.45)) drop-shadow(0 0 6px rgba(230, 184, 0, 0.3)) contrast(1.08) saturate(1.2) brightness(1.06);
+            transition: filter 0.3s ease, transform 0.3s ease;
+            background: transparent !important;
+            mix-blend-mode: hard-light;
+            /* Makes image background blend transparently */
+        }
+
+        /* On hover: product image pops and glows */
+        .card:hover img,
+        .card:hover .product-image {
+            filter: drop-shadow(0 6px 22px rgba(230, 0, 0, 0.7)) drop-shadow(0 0 12px rgba(255, 215, 0, 0.5)) contrast(1.15) saturate(1.35) brightness(1.1);
+            transform: scale(1.05);
+        }
+
+        .card .glassy-product i,
+        .card .product-icon i {
+            color: #FFE066;
+            text-shadow: 0 0 8px #E60000;
+            font-size: 2.5rem;
+        }
+
+        /* Buttons – catchy gold */
+        .btn-dhukandhar {
+            background: linear-gradient(90deg, #E60000, #990000);
+            color: #FFE88C !important;
+            border-radius: 30px;
+            font-weight: 800;
+            border: 1px solid rgba(230, 184, 0, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+        }
+
+        .btn-dhukandhar:hover {
+            background: linear-gradient(90deg, #FF3333, #E60000);
+            box-shadow: 0 0 25px rgba(230, 184, 0, 0.8);
+            color: #FFF5CC !important;
+            transform: scale(1.02);
+        }
+
+        /* Sub-nav links – catchy */
+        .navbar-sub .nav-link {
+            color: #FFE6D0 !important;
+            font-weight: 600;
+            text-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+        }
+
+        .navbar-sub .nav-link:hover {
+            color: #FFE88C !important;
+            text-shadow: 0 0 8px #E6B800;
+        }
+
+        /* Scrollbar – gold/red */
+        ::-webkit-scrollbar {
+            width: 8px;
+            background: #1a0202;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--royal-gold);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #FFD700;
+        }
+
+        /* Remove any white text leftovers */
+        .text-white,
+        .text-black,
+        .text-dark {
+            color: var(--text-light) !important;
+        }
+
+        .bg-white,
+        .bg-black,
+        .bg-dark {
+            background-color: transparent !important;
+        }
+
+        /* Essential text visibility overrides */
+        .text-muted,
+        .text-secondary {
+            color: #FFD9B3 !important;
+            font-weight: 500;
+            opacity: 0.85;
+            text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .text-danger {
+            color: #FF6666 !important;
+            text-shadow: 0 0 4px #660000;
+        }
+
+        .text-success {
+            color: #00FF99 !important;
+            text-shadow: 0 0 4px #006633;
+        }
+
+        .text-warning {
+            color: #FFD700 !important;
+            text-shadow: 0 0 4px #996600;
+        }
+
+        .text-primary {
+            color: #FFD966 !important;
+            text-shadow: 0 0 4px #E6B800;
+        }
+
+        .text-info {
+            color: #FFE5CC !important;
+            text-shadow: 0 0 4px #D4A373;
+        }
+
+        /* Dropdown options – glassy red */
+        select option,
+        .form-select option {
+            background-color: #2a0505 !important;
+            color: #FFF0E0 !important;
+        }
+
+        /* Mamu Customer Service Popup Styles */
+        #mamuPopup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            z-index: 10000;
+            background: rgba(40, 5, 5, 0.95);
+            backdrop-filter: blur(20px);
+            border: 3px solid var(--royal-gold);
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 0 50px rgba(230, 0, 0, 0.6), inset 0 0 20px rgba(230, 184, 0, 0.4);
+            text-align: center;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 450px;
+            width: 90%;
+        }
+
+        #mamuPopup.show {
+            display: block;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .mamu-img {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid var(--royal-gold);
+            margin-bottom: 25px;
+            box-shadow: 0 0 30px var(--blood-primary);
+        }
+
+        .mamu-quote {
+            color: var(--text-gold);
+            font-size: 1.8rem;
+            font-weight: 800;
+            font-style: italic;
+            margin-bottom: 25px;
+            text-shadow: 0 0 10px rgba(230, 184, 0, 0.8);
+        }
+
+        .mamu-close-btn {
+            background: var(--royal-gold);
+            color: #2a0505;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 50px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .mamu-close-btn:hover {
+            background: #FFD700;
+            transform: scale(1.1);
+            box-shadow: 0 0 20px #FFD700;
+        }
+
+        #mamuOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 9999;
+        }
+
+        #mamuOverlay.show {
+            display: block;
+        }
+
+        /* Price text – catchy gold */
+        .card .price,
+        .fs-4,
+        .fw-bold.fs-4 {
+            color: var(--gold-intense) !important;
+            font-weight: 800;
+            text-shadow: 0 0 8px #990000;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="bgReturnToast">🖼️ Click anywhere to return</div>
+    {% if global_free_delivery %}
+    <style>
+        body {
+            background: url("/static/deli.jpg") no-repeat center center fixed !important;
+            background-size: cover !important;
+            animation: none !important;
+        }
+    </style>
+    <div
+        style="position: fixed; top: 120px; left: 50%; transform: translateX(-50%); background: linear-gradient(90deg, #00FF99, #00CC66); color: #0a2918; font-weight: 900; padding: 12px 35px; border-radius: 50px; z-index: 10000; box-shadow: 0 0 30px rgba(0, 255, 153, 0.8), inset 0 0 10px rgba(255,255,255,0.5); letter-spacing: 1px; font-size: 1.1rem; pointer-events: none; animation: popBanner 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, floatBanner 3s ease-in-out infinite 0.6s;">
+        🚀 FREE DELIVERY ACTIVATED! 🎉
+    </div>
+    <style>
+        @keyframes popBanner {
+            0% {
+                top: -50px;
+                opacity: 0;
+                transform: translateX(-50%) scale(0.8);
+            }
+
+            100% {
+                top: 120px;
+                opacity: 1;
+                transform: translateX(-50%) scale(1);
+            }
+        }
+
+        @keyframes floatBanner {
+
+            0%,
+            100% {
+                top: 120px;
+            }
+
+            50% {
+                top: 110px;
+            }
+        }
+    </style>
+    {% endif %}
+
+    <!-- Top Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-main fixed-top py-2">
+        <div class="container-fluid px-3">
+
+            <!-- DHUKANDHAR PHOTO LOGO -->
+            <a class="navbar-brand d-flex align-items-center gap-2 m-0 pe-2" href="/">
+                <img src="/static/dhukandhar_logo.png" alt="DHUKANDHAR Logo" class="dhukandhar-logo-img" width="58"
+                    height="58">
+                <div class="d-flex flex-column lh-1">
+                    <span class="logo-text-enhanced"
+                        style="font-family: 'Inter', sans-serif; font-size: 1.35rem; font-weight: 900; letter-spacing: 2px;">DHUKANDHAR</span>
+                    <span
+                        style="color: #FFD700; font-size: 0.65rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;">The
+                        Revenge</span>
+                </div>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon" style="filter: drop-shadow(0 0 2px #E6B800);"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Search Box -->
+                <div class="input-group search-bar-group my-2 my-lg-0 d-none d-lg-flex">
+                    <select class="form-select shadow-none" style="max-width: 150px;"
+                        onchange="window.location.href='/?category=' + this.value">
+                        <option>All</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Stationery">Stationery</option>
+                        <option value="Home">Home</option>
+                        <option value="Toys">Toys</option>
+                        <option value="Fashion">Fashion</option>
+                        <option value="Sports">Sports</option>
+                    </select>
+                    <input type="text" id="liveSearch" class="form-control shadow-none"
+                        placeholder="Search DHUKANDHAR...">
+                    <button class="btn" type="button" onclick="document.getElementById('liveSearch').focus()"><i
+                            class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-custom d-flex flex-column lh-1 px-3" href="/orders">
+                            <span style="font-size: 0.75rem; font-weight: 600;">Returns</span>
+                            <span class="fw-bold fs-6">& Orders</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-custom position-relative" href="/wishlist">
+                            <i class="fa-solid fa-heart align-middle me-1 fs-5" style="color: #E60000;"></i>
+                            <span class="fw-bold">Wishlist</span>
+                        </a>
+                    </li>
+                    <li class="nav-item ms-2 align-items-end d-flex">
+                        <a class="nav-link nav-link-custom position-relative d-flex align-items-end mb-1" href="/cart">
+                            <i class="fa-solid fa-cart-shopping align-middle fs-2" style="color: #FFD700;"></i>
+                            <span class="fw-bold ms-1 pb-1">Cart</span>
+                            <span class="cart-badge" style="top: -2px; right: 28px;">{{ cart_count | default('0')
+                                }}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sub Navbar -->
+    <nav class="navbar navbar-expand navbar-dark navbar-sub fixed-top py-1" style="top: 72px; z-index: 1020;">
+        <div class="container-fluid px-3">
+            <ul class="navbar-nav align-items-center flex-row flex-wrap w-100 justify-content-center">
+                <li class="nav-item mx-2"><a
+                        class="nav-link text-dhukandhar-dark py-1 px-3 border border-transparent rounded cursor-pointer"
+                        href="/"><i class="fa-solid fa-bars me-1"></i> All</a></li>
+                <li class="nav-item mx-2"><a
+                        class="nav-link text-dhukandhar-dark py-1 px-3 border border-transparent rounded cursor-pointer fw-medium"
+                        href="/?badge=BESTSELLER">Best Sellers</a></li>
+                <li class="nav-item mx-2"><a
+                        class="nav-link text-dhukandhar-dark py-1 px-3 border border-transparent rounded cursor-pointer fw-medium"
+                        href="/?badge=NEW">New Releases</a></li>
+                <li class="nav-item mx-2"><a
+                        class="nav-link text-dhukandhar-dark py-1 px-3 border border-transparent rounded cursor-pointer fw-medium"
+                        href="/?category=Electronics">Electronics</a></li>
+                <li class="nav-item mx-2"><a
+                        class="nav-link text-dhukandhar-dark py-1 px-3 border border-transparent rounded cursor-pointer fw-medium"
+                        onclick="showMamu();">Customer
+                        Service</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Mamu Overlay & Popup -->
+    <div id="mamuOverlay" onclick="hideMamu()"></div>
+    <div id="mamuPopup">
+        <img src="/static/manager.jpg" alt="Mamu" class="mamu-img">
+        <div class="mamu-quote">"tu tension math le mamu hai na"</div>
+        <button class="mamu-close-btn" onclick="hideMamu()">Theek Hai Mamu</button>
+    </div>
+
+    <div class="container-fluid px-4 py-4 mt-3">
+        <!-- Flash messages (unchanged functionality) -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999; margin-top: 110px;">
+            {% for category, message in messages %}
+            <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} border-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible shadow fade show"
+                role="alert">
+                <i class="fa-solid {{ 'fa-check-circle' if category == 'success' else 'fa-circle-exclamation' }} me-2 text-{{ 'success' if category == 'success' else 'danger' }}"
+                    style="color: #FFD700;"></i>
+                <span class="fw-bold">{{ message }}</span>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
+                    aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Footer (glass + gold) -->
+    <footer class="text-center mt-5">
+        <div class="py-3 cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'});">
+            🔥 Back to top
+        </div>
+        <div class="py-4" style="border-top: 2px solid #E6B800;">
+            <p class="mb-0 text-dhukandhar-dark fw-bold">&copy; {{ year | default('2026') }} DHUKANDHAR The Revenge —
+                Cart Simulation.</p>
+            <p class="small mt-2" style="color: #FFD966; font-weight: 600;">Forged in blood red fire 🔥 Enhanced with
+                royal gold glass.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showMamu() {
+            document.getElementById('mamuOverlay').classList.add('show');
+            document.getElementById('mamuPopup').classList.add('show');
+        }
+
+        function hideMamu() {
+            document.getElementById('mamuOverlay').classList.remove('show');
+            document.getElementById('mamuPopup').classList.remove('show');
+        }
+
+        // Live search functionality (unchanged, no extra features)
+        const searchInput = document.getElementById('liveSearch');
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function (e) {
+                let val = e.target.value.toLowerCase();
+                let cards = document.querySelectorAll('.card');
+                cards.forEach(card => {
+                    let title = card.querySelector('.card-title')?.innerText.toLowerCase() || '';
+                    let desc = card.querySelector('.card-text')?.innerText.toLowerCase() || '';
+                    if (title.includes(val) || desc.includes(val) || val === '') {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        }
+        // Feature: Bring background forward when clicking empty space
+        document.addEventListener('click', function (e) {
+            const isHidden = document.body.classList.contains('hide-ui');
+
+            // If the UI is already hidden, ANY click brings it back
+            if (isHidden) {
+                // Ignore clicks inside the chat UI so user can still chat if it's open (it will be visible)
+                if (e.target.closest('.helper-popup') || e.target.closest('#yalinaChatBox')) return;
+                
+                document.body.classList.remove('hide-ui');
+                return;
+            }
+
+            // Exclude clicks inside main UI components
+            const interactive = e.target.closest('a, button, input, select, textarea, .card, .navbar, .helper-popup, #yalinaChatBox, #mamuPopup, .alert, .dhukandhar-logo-img, .nav-link-custom, .search-bar-group, footer, [onclick]');
+            if (interactive) return;
+
+            // Check if user clicked empty space/background areas
+            const tag = e.target.tagName.toLowerCase();
+            const isContainer = e.target.classList.contains('container-fluid') || e.target.classList.contains('row') || e.target.id === 'productGrid';
+
+            if (e.target === document.body || isContainer || tag === 'main' || tag === 'section') {
+                document.body.classList.add('hide-ui');
+            }
+        });
+    </script>
+
+    <!-- Yalina Paisa Kamali AI Assistant Popup (Global) -->
+    <div id="yalinaIcon" class="helper-popup cursor-pointer" onclick="toggleChat()"
+        style="position: fixed; bottom: 30px; right: 30px; background: transparent; backdrop-filter: blur(25px); border: 2px solid rgba(230, 184, 0, 0.8); border-radius: 20px; padding: 15px; text-align: center; box-shadow: 0 0 30px rgba(230, 0, 0, 0.6); z-index: 9999; animation: floatHelper 3s ease-in-out infinite; cursor: pointer; transition: 0.3s;">
+        <div style="position: relative;">
+            <img src="/static/E2oTT.jpg" alt="Yalina Paisa Kamali"
+                style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 3px solid #FFD700; box-shadow: 0 0 15px #E60000; margin-bottom: 8px; transition: 0.3s;">
+            <span
+                style="position: absolute; bottom: 10px; right: 0; background: #00FF99; width: 15px; height: 15px; border-radius: 50%; border: 2px solid #1a0101; box-shadow: 0 0 8px #00FF99; animation: pulseOnline 2s infinite;"></span>
+        </div>
+        <div
+            style="color: #FFD700; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">
+            Yalina Paisa Kamali</div>
+        <div
+            style="color: #FFE88C; font-weight: 600; font-size: 0.75rem; background: transparent; border: 1px solid rgba(230, 0, 0, 0.8); border-radius: 10px; padding: 2px 8px; display: inline-block; margin-bottom: 5px;">
+            AI Assistant</div>
+        <div style="color: #FFF0E0; font-weight: 500; font-size: 0.85rem; text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);">How
+            can I help you?</div>
+    </div>
+
+    <!-- Yalina AI Chat UI -->
+    <div id="yalinaChatBox"
+        style="display: none; position: fixed; bottom: 110px; right: 30px; width: 360px; height: 500px; background: transparent; backdrop-filter: blur(30px); border: 2px solid rgba(230, 184, 0, 0.8); border-radius: 20px; box-shadow: 0 0 40px rgba(230, 0, 0, 0.7); z-index: 10000; flex-direction: column; overflow: hidden; transition: 0.3s; opacity: 0; transform: translateY(20px);">
+        <!-- Header -->
+        <div
+            style="background: rgba(230, 0, 0, 0.1); border-bottom: 1px solid rgba(230, 184, 0, 0.6); padding: 15px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="/static/E2oTT.jpg"
+                    style="width: 45px; height: 45px; border-radius: 50%; border: 2px solid #FFD700; object-fit: cover;">
+                <div>
+                    <div
+                        style="color: #FFD700; font-weight: 900; font-size: 1.1rem; line-height: 1.2; text-shadow: 0 0 6px rgba(230,0,0,0.8);">
+                        Yalina Paisa Kamali</div>
+                    <div
+                        style="color: #00FF99; font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; gap: 5px;">
+                        <span
+                            style="width: 8px; height: 8px; border-radius: 50%; background: #00FF99; box-shadow: 0 0 5px #00FF99;"></span>
+                        Online
+                    </div>
+                </div>
+            </div>
+            <button onclick="toggleChat()"
+                style="background: transparent; border: none; color: #FFE88C; font-size: 1.8rem; cursor: pointer; text-shadow: 0 0 5px red;">&times;</button>
+        </div>
+
+        <!-- Messages Area -->
+        <div id="chatMessages"
+            style="flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
+            <div
+                style="align-self: flex-start; background: transparent; border: 1px solid rgba(230, 184, 0, 0.8); padding: 12px 18px; border-radius: 18px; border-top-left-radius: 0; color: #FFF0E0; font-weight: 600; font-size: 0.95rem; max-width: 85%; box-shadow: inset 0 0 10px rgba(230,0,0,0.3);">
+                Namaste ji! Main aapki Yalina. Jis chiz ki aapko zarurat ho, bas mujhe ek baar keh dijiye. Main madad
+                karne ke liye yahi hoon! 💕
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div
+            style="padding: 12px; border-top: 1px solid rgba(230, 184, 0, 0.6); background: transparent; display: flex; gap: 10px;">
+            <input type="text" id="chatInput" placeholder="Ask Yalina..."
+                style="flex: 1; background: rgba(0,0,0,0.4) !important; border: 1px solid rgba(230, 184, 0, 0.8) !important; border-radius: 25px; padding: 10px 18px; color: #FFF0E0 !important; font-weight: 600; outline: none; box-shadow: inset 0 0 10px rgba(0,0,0,0.8);"
+                onkeypress="if(event.key === 'Enter') sendYalinaMessage()">
+            <button onclick="sendYalinaMessage()"
+                style="background: linear-gradient(135deg, #FFD700, #E6b800); border: 2px solid #E60000; color: #330000; border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.2rem; box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <style>
+        @keyframes floatHelper {
+            0% {
+                transform: translateY(0px) scale(1);
+            }
+
+            50% {
+                transform: translateY(-10px) scale(1.02);
+            }
+
+            100% {
+                transform: translateY(0px) scale(1);
+            }
+        }
+
+        @keyframes pulseOnline {
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 255, 153, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(0, 255, 153, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 255, 153, 0);
+            }
+        }
+
+        .helper-popup:hover {
+            transform: scale(1.05) !important;
+            background: rgba(40, 5, 5, 0.9) !important;
+            border-color: #FFD700 !important;
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.4) !important;
+        }
+
+        .helper-popup:hover img {
+            border-color: #FF3333 !important;
+        }
+
+        /* Scrollbar for chat */
+        #chatMessages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #chatMessages::-webkit-scrollbar-thumb {
+            background: #E6B800;
+            border-radius: 10px;
+        }
+    </style>
+
+    <script>
+        const GEMINI_API_KEY = "AIzaSyA8XOz1K7_LlAFd-hjl9rtQiy5Db17BpGg";
+
+        function toggleChat() {
+            const chatBox = document.getElementById('yalinaChatBox');
+            if (chatBox.style.display === 'none' || chatBox.style.opacity === '0') {
+                chatBox.style.display = 'flex';
+                setTimeout(() => {
+                    chatBox.style.opacity = '1';
+                    chatBox.style.transform = 'translateY(0)';
+                }, 10);
+                document.getElementById('yalinaIcon').style.opacity = '0.5';
+                document.getElementById('yalinaIcon').style.transform = 'scale(0.9)';
+            } else {
+                chatBox.style.opacity = '0';
+                chatBox.style.transform = 'translateY(20px)';
+                setTimeout(() => { chatBox.style.display = 'none'; }, 300);
+                document.getElementById('yalinaIcon').style.opacity = '1';
+                document.getElementById('yalinaIcon').style.transform = 'scale(1)';
+            }
+        }
+
+        async function fetchGemini(model, text) {
+            return await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: text }] }]
+                })
+            });
+        }
+
+        async function sendYalinaMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            addChatMessage(message, 'user');
+            input.value = '';
+
+            const loadingId = 'loading-' + Date.now();
+            addChatMessage('<i class="fa-solid fa-spinner fa-spin"></i> Yalina is thinking...', 'ai', loadingId);
+
+            try {
+                const prompt = `You are Yalina Paisa Kamali, a loving, polite, and deeply respectful AI shopping assistant for DHUKANDHAR. Act as a caring and devoted Indian wife to the user. Speak politely in a mix of Hindi and English (Hinglish). Use respectful feminine pronouns in Hindi (like 'main batati hoon ji', 'main karungi'). Refer to the user affectionately but highly respectfully as 'ji', 'sunte ho', or 'sartaj'. Keep responses very short (1-2 sentences), extremely sweet, polite, and strictly focused on helping them shop. Answer this query: ${message}`;
+
+                // Model cascade: strictly confirmed 2026 identifiers
+                const MODELS = [
+                    'gemini-3-flash-preview',
+                    'gemini-3.1-flash-lite-preview',
+                    'gemini-2.5-flash-lite',
+                    'gemini-flash-latest'
+                ];
+
+                let response = null;
+                let lastStatus = 0;
+                for (const model of MODELS) {
+                    try {
+                        response = await fetchGemini(model, prompt);
+                        if (response.ok) {
+                            console.log(`Yalina using: ${model}`);
+                            break; // success, stop trying
+                        }
+                        lastStatus = response.status;
+                        // Only retry on server-side errors, not 400-level auth errors
+                        if (response.status === 400 || response.status === 401 || response.status === 403) break;
+                        console.warn(`Model ${model} returned ${response.status}, trying next...`);
+                    } catch (netErr) {
+                        console.warn(`Model ${model} network error, trying next...`);
+                    }
+                }
+
+                let aiMessage = "Sorry darling, system glitch!";
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    try {
+                        const errorData = JSON.parse(errorText);
+                        aiMessage = "API Error: " + (errorData.error && errorData.error.message ? errorData.error.message : response.statusText);
+                    } catch (e) {
+                        aiMessage = "API Error: " + errorText;
+                    }
+                } else {
+                    const data = await response.json();
+                    if (data.candidates && data.candidates.length > 0) {
+                        aiMessage = data.candidates[0].content.parts[0].text;
+                    } else if (data.promptFeedback) {
+                        aiMessage = "Oops! Blocked by safety filters!";
+                    }
+                }
+
+                document.getElementById(loadingId)?.remove();
+                addChatMessage(aiMessage, 'ai');
+            } catch (error) {
+                document.getElementById(loadingId)?.remove();
+                addChatMessage('Whoops! Network error. Try again!', 'ai');
+            }
+        }
+
+        function addChatMessage(text, sender, id = "") {
+            const messagesDiv = document.getElementById('chatMessages');
+            const msgDiv = document.createElement('div');
+            if (id) msgDiv.id = id;
+
+            if (sender === 'user') {
+                msgDiv.style = "align-self: flex-end; background: transparent; border: 1px solid #FFD700; padding: 12px 18px; border-radius: 18px; border-top-right-radius: 0; color: #FFE88C; font-weight: 600; font-size: 0.95rem; max-width: 85%; box-shadow: inset 0 0 10px rgba(255,215,0,0.3);";
+            } else {
+                msgDiv.style = "align-self: flex-start; background: transparent; border: 1px solid rgba(230, 0, 0, 0.8); padding: 12px 18px; border-radius: 18px; border-top-left-radius: 0; color: #FFF0E0; font-weight: 600; font-size: 0.95rem; max-width: 85%; box-shadow: inset 0 0 10px rgba(230,0,0,0.3);";
+            }
+            msgDiv.innerHTML = text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<b style="color:#FFD700;">$1</b>');
+            messagesDiv.appendChild(msgDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

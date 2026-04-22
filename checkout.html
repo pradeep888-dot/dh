@@ -1,0 +1,285 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<style>
+    .step-section {
+        transition: all 0.4s ease;
+        opacity: 1;
+    }
+    .step-locked {
+        opacity: 0.4;
+        pointer-events: none;
+        filter: grayscale(0.6) blur(2px);
+    }
+    .step-badge {
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+        text-align: center;
+        background: var(--royal-gold);
+        color: #1a0101;
+        border-radius: 50%;
+        display: inline-block;
+        font-weight: 900;
+        margin-right: 12px;
+        box-shadow: 0 0 10px var(--gold-intense);
+    }
+    .step-active .step-badge {
+        background: #E60000;
+        color: #FFD700;
+        box-shadow: 0 0 20px #E60000;
+        animation: pulseGold 2s infinite;
+    }
+    @keyframes pulseGold {
+        0% { box-shadow: 0 0 0 0 rgba(230, 184, 0, 0.7); }
+        70% { box-shadow: 0 0 0 15px rgba(230, 184, 0, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(230, 184, 0, 0); }
+    }
+    .review-item {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 10px;
+        margin-bottom: 8px;
+        border: 1px solid rgba(230, 184, 0, 0.2);
+    }
+</style>
+
+<div class="row max-w-75 mx-auto g-4 checkout-container">
+    <div class="col-lg-8">
+        <div id="checkoutProgress" class="mb-4 d-flex justify-content-between text-uppercase small fw-bold" style="color: #FFD9B3;">
+            <span id="prog1" class="text-warning">1. Address</span>
+            <span id="prog2">2. Payment</span>
+            <span id="prog3">3. Review Bill</span>
+        </div>
+
+        <form action="/place_order" method="POST" id="checkoutForm">
+            <!-- STEP 1: Delivery Address -->
+            <div id="section1" class="card mb-4 border-0 shadow-sm step-section step-active">
+                <div class="card-header fw-bold py-3 border-bottom fs-5" style="background: rgba(40,8,8,0.8); backdrop-filter: blur(8px);">
+                    <span class="step-badge">1</span> Delivery address
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-3 p-3 border rounded" style="border-color: rgba(230,184,0,0.4) !important;">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Full Name <span class="text-danger">*</span></label>
+                            <input type="text" name="name" id="input_name" class="form-control form-control-sm" required placeholder="John Doe">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small">Mobile Number <span class="text-danger">*</span></label>
+                            <input type="text" name="phone" id="input_phone" class="form-control form-control-sm" required placeholder="10-digit number">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold small">Flat, House no., Building, Apartment <span class="text-danger">*</span></label>
+                            <input type="text" name="address" id="input_address" class="form-control form-control-sm" required placeholder="123 Street Name">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold small">Pincode <span class="text-danger">*</span></label>
+                            <input type="text" name="pincode" id="input_pincode" class="form-control form-control-sm" required placeholder="6 digits">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold small">City <span class="text-danger">*</span></label>
+                            <input type="text" name="city" id="input_city" class="form-control form-control-sm" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold small">State <span class="text-danger">*</span></label>
+                            <select name="state" id="input_state" class="form-select form-select-sm" required>
+                                <option value="" disabled selected>Choose...</option>
+                                <option value="MH">Maharashtra</option>
+                                <option value="KA">Karnataka</option>
+                                <option value="DL">Delhi</option>
+                                <option value="TN">Tamil Nadu</option>
+                                <option value="OT">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <button type="button" onclick="goToStep(2)" class="btn btn-dhukandhar px-4">Continue to Payment</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: Payment Method -->
+            <div id="section2" class="card mb-4 border-0 shadow-sm step-section step-locked">
+                <div class="card-header fw-bold py-3 border-bottom fs-5" style="background: rgba(40,8,8,0.8); backdrop-filter: blur(8px);">
+                    <span class="step-badge">2</span> Payment method
+                </div>
+                <div class="card-body p-4">
+                    <div class="p-3 border rounded" style="border-color: rgba(230,184,0,0.4) !important;">
+                        <!-- Credit Card Option -->
+                        <div class="form-check border-bottom p-3 payment-option">
+                            <input class="form-check-input mt-2 checkout-radio" type="radio" name="payment" id="pay_card" value="Credit/Debit Card (Razorpay)" onclick="togglePaymentUI()">
+                            <label class="form-check-label w-100 ms-2" for="pay_card">
+                                <div class="fw-bold mb-1">Credit / Debit / ATM Card <span class="badge ms-2" style="background-color: #2b84ea;"><i class="fa-solid fa-bolt text-warning"></i> Razorpay</span></div>
+                                <div class="d-flex gap-2 text-muted fs-4">
+                                    <i class="fa-brands fa-cc-visa text-primary"></i> <i class="fa-brands fa-cc-mastercard text-danger"></i>
+                                </div>
+                            </label>
+                            <div id="card_ui" class="mt-3 d-none ms-2 p-3 rounded border" style="background: rgba(25,3,3,0.7); border-color: rgba(230,184,0,0.4) !important;">
+                                <label class="form-label small fw-bold">Card Number *</label>
+                                <input type="text" class="form-control form-control-sm mb-2" placeholder="XXXX-XXXX-XXXX-XXXX" name="card_number">
+                            </div>
+                        </div>
+
+                        <!-- Paytm Option -->
+                        <div class="form-check border-bottom p-3 payment-option">
+                            <input class="form-check-input mt-2 checkout-radio" type="radio" name="payment" id="pay_paytm" value="Paytm / UPI" onclick="togglePaymentUI()">
+                            <label class="form-check-label w-100 ms-2" for="pay_paytm">
+                                <div class="fw-bold mb-1">UPI Apps (Paytm, PhonePe)</div>
+                            </label>
+                            <div id="upi_ui" class="mt-3 d-none ms-2 p-3 rounded border" style="background: rgba(25,3,3,0.7); border-color: rgba(230,184,0,0.4) !important;">
+                                <div class="fw-bold mb-2 text-success"><i class="fa-solid fa-qrcode me-1"></i> Pay to: dhukandhar@paytm</div>
+                                <input type="text" class="form-control form-control-sm" placeholder="your@upi" name="upi_id">
+                            </div>
+                        </div>
+
+                        <!-- COD -->
+                        <div class="form-check p-3 payment-option">
+                            <input class="form-check-input mt-2 checkout-radio" type="radio" name="payment" id="pay_cod" value="Cash on Delivery (COD)" checked onclick="togglePaymentUI()">
+                            <label class="form-check-label w-100 ms-2" for="pay_cod">
+                                <div class="fw-bold mb-1">Cash on Delivery (COD)</div>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mt-4 d-flex gap-2">
+                        <button type="button" onclick="goToStep(1)" class="btn btn-outline-warning px-4">Back</button>
+                        <button type="button" onclick="goToStep(3)" class="btn btn-dhukandhar px-4">Continue to Review</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: Review Bill -->
+            <div id="section3" class="card mb-4 border-0 shadow-sm step-section step-locked">
+                <div class="card-header fw-bold py-3 border-bottom fs-5" style="background: rgba(40,8,8,0.8); backdrop-filter: blur(8px);">
+                    <span class="step-badge">3</span> Review Bill & Place Order
+                </div>
+                <div class="card-body p-4">
+                    <div id="finalReviewArea" class="mb-4">
+                        <h6 class="fw-bold mb-3" style="color: #FFE88C;"><i class="fa-solid fa-file-invoice-dollar me-2"></i>Final Proforma Bill</h6>
+                        <div class="p-3 border rounded shadow-inner" style="background: rgba(0,0,0,0.2); border-color: rgba(230,184,0,0.3) !important;">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Selection for:</span>
+                                <span id="review_name" class="fw-bold text-light">--</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2 pb-2 border-bottom border-secondary">
+                                <span class="text-muted">Address:</span>
+                                <span id="review_address" class="small text-end" style="max-width: 200px;">--</span>
+                            </div>
+                            <div id="reviewItemsList">
+                                <!-- JS Populated -->
+                            </div>
+                            <div class="mt-3 pt-2 border-top border-warning">
+                                <div class="d-flex justify-content-between fs-4 fw-bold" style="color: #FFD700;">
+                                    <span>GRAND TOTAL:</span>
+                                    <span>₹{{ "%.2f"|format(grand_total) }}</span>
+                                </div>
+                                <div class="small text-success text-center mt-2">
+                                    <i class="fa-solid fa-shield-halved me-1"></i> Secure End-to-End Encryption Active
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="button" onclick="goToStep(2)" class="btn btn-outline-warning px-4">Change Payment</button>
+                        <button type="submit" class="btn btn-dhukandhar px-5 fw-bold" style="font-size: 1.1rem;">PLACE YOUR ORDER NOW</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Sidebar (Summary) -->
+    <div class="col-lg-4 order-summary">
+        <div class="card border-0 shadow-sm sticky-top" style="top: 130px;">
+            <div class="card-body p-4 bg-light rounded">
+                <h5 class="fw-bold mb-3 fs-6" style="color: #FFE88C;">Cart Snapshot</h5>
+                <div class="d-flex justify-content-between mb-1 small text-muted">
+                    <span>Items:</span> <span>₹{{ "%.2f"|format(total) }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-1 small text-danger">
+                    <span>GST (18%):</span> <span>₹{{ "%.2f"|format(gst) }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2 small border-bottom pb-2">
+                    <span>Delivery:</span> <span>{% if free_delivery %}0.00{% else %}49.00{% endif %}</span>
+                </div>
+                <div class="d-flex justify-content-between mt-2 fs-5 fw-bold" style="color: #FFD700;">
+                    <span>Total:</span> <span>₹{{ "%.2f"|format(grand_total) }}</span>
+                </div>
+                {% if saved > 0 %}<div class="mt-2 text-success small">Saved: ₹{{ "%.2f"|format(saved) }}</div>{% endif %}
+                
+                <hr>
+                <div class="small text-muted" style="font-size:0.7rem;">Complete steps on the left to unlock final payment.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    const checkoutForm = document.getElementById('checkoutForm');
+
+    function togglePaymentUI() {
+        document.getElementById('card_ui').classList.toggle('d-none', !document.getElementById('pay_card').checked);
+        document.getElementById('upi_ui').classList.toggle('d-none', !document.getElementById('pay_paytm').checked);
+    }
+
+    function goToStep(step) {
+        // Validation for Step 1 -> 2 or 3
+        if (step === 2 || step === 3) {
+            if (!document.getElementById('input_name').value || !document.getElementById('input_address').value) {
+                alert("Mamu! Please fill the address first.");
+                document.getElementById('input_name').focus();
+                return;
+            }
+        }
+
+        // Visual Updates
+        for (let i = 1; i <= 3; i++) {
+            const sec = document.getElementById('section' + i);
+            const prog = document.getElementById('prog' + i);
+
+            if (i === step) {
+                sec.classList.remove('step-locked');
+                sec.classList.add('step-active');
+                prog.classList.add('text-warning');
+                sec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                sec.classList.remove('step-active');
+                if (i > step) sec.classList.add('step-locked');
+                prog.classList.remove('text-warning');
+            }
+        }
+
+        // Populate Step 3 Review
+        if (step === 3) {
+            document.getElementById('review_name').innerText = document.getElementById('input_name').value;
+            document.getElementById('review_address').innerText =
+                `${document.getElementById('input_address').value}, ${document.getElementById('input_city').value} - ${document.getElementById('input_pincode').value}`;
+        }
+    }
+
+    checkoutForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const paymentMethod = document.querySelector('input[name="payment"]:checked');
+
+        if (paymentMethod.id === 'pay_card') {
+            var options = {
+                "key": "rzp_test_dummykeyforcart123",
+                "amount": {{ "%.0f"|format(grand_total * 100) }},
+                "currency": "INR",
+                "name": "DHUKANDHAR",
+                "handler": function (response) {
+                    HTMLFormElement.prototype.submit.call(checkoutForm);
+                },
+                "prefill": { "name": checkoutForm.name.value, "contact": checkoutForm.phone.value },
+                "theme": { "color": "#E60000" }
+            };
+            new Razorpay(options).open();
+        } else if (paymentMethod.id === 'pay_paytm') {
+            if (confirm("Simulating Paytm QR Scan... Success?")) HTMLFormElement.prototype.submit.call(checkoutForm);
+        } else {
+            HTMLFormElement.prototype.submit.call(checkoutForm);
+        }
+    });
+</script>
+{% endblock %}

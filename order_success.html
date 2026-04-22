@@ -1,0 +1,142 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container text-center py-5 mt-4">
+    <!-- Celebratory Icon -->
+    <div class="mb-4">
+        <i class="fa-solid fa-circle-check text-success" style="font-size: 5rem;"></i>
+    </div>
+    
+    <style>
+        body {
+            background: url("/static/ding.jpg") no-repeat center center fixed !important;
+            background-size: cover !important;
+            animation: none !important;
+        }
+    </style>
+
+    <h1 class="fw-bold text-success mb-3">Order Placed Successfully!</h1>
+    <h4 class="text-muted mb-4" style="color: #FFD9B3 !important;">Thank you for shopping with DHUKANDHAR.</h4>
+    
+    <div class="card d-inline-block shadow-sm p-4 text-start mb-5 d-print-none" style="min-width: 350px; background: rgba(30, 8, 8, 0.7) !important; backdrop-filter: blur(15px); border: 1px solid rgba(230, 184, 0, 0.5);">
+        <h5 class="border-bottom pb-2 mb-3" style="color: #FFE88C;"><i class="fa-solid fa-receipt me-2"></i>Order Summary</h5>
+        <div class="mb-2"><span style="color: #FFD9B3;">Order Number:</span> <span class="fw-bold" style="color: #FFD700;">{{ order.id }}</span></div>
+        <div class="mb-2"><span style="color: #FFD9B3;">Date:</span> {{ order.date }}</div>
+        <div class="mb-2"><span style="color: #FFD9B3;">Total Paid:</span> ₹{{ "%.2f"|format(order.grand_total) }}</div>
+        <div class="mb-2"><span style="color: #FFD9B3;">Payment Mode:</span> <span class="badge" style="background: rgba(153, 0, 0, 0.6); border: 1px solid #E6B800;">{{ order.payment }}</span></div>
+        <div class="mt-3 p-2 rounded small" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(230, 184, 0, 0.3);">
+            <span class="fw-bold d-block mb-1" style="color: #FFE88C;">Delivering to:</span>
+            <div style="color: #FFF5E6;">
+                {{ order.name }}<br>
+                {{ order.address }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Formal Receipt Section -->
+    <div id="formalReceipt" class="mt-5 mx-auto p-5 text-start shadow-lg" style="max-width: 800px; background: #fff; color: #333; border-radius: 8px; font-family: 'Courier New', Courier, monospace;">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold text-uppercase m-0">DHUKANDHAR</h2>
+            <p class="small text-muted mb-1">Official Order Receipt</p>
+            <hr style="border-top: 2px dashed #333;">
+        </div>
+        
+        <div class="row mb-4">
+            <div class="col-6">
+                <div class="fw-bold text-uppercase small text-muted">Billed To:</div>
+                <div class="fw-bold">{{ order.name }}</div>
+                <div class="small">{{ order.address }}</div>
+                <div class="small">Phone: {{ order.phone }}</div>
+            </div>
+            <div class="col-6 text-end">
+                <div class="fw-bold text-uppercase small text-muted">Order Details:</div>
+                <div>ID: {{ order.id }}</div>
+                <div>Date: {{ order.date }}</div>
+                <div>Status: PAID</div>
+            </div>
+        </div>
+
+        <table class="table table-sm table-borderless mb-4">
+            <thead class="border-bottom">
+                <tr class="small text-uppercase text-muted">
+                    <th>Description</th>
+                    <th class="text-center">Qty</th>
+                    <th class="text-end">Price</th>
+                    <th class="text-end">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order['items'] %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td class="text-center">{{ item.qty }}</td>
+                    <td class="text-end">₹{{ "%.2f"|format(item.price) }}</td>
+                    <td class="text-end">₹{{ "%.2f"|format(item.subtotal) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="row justify-content-end">
+            <div class="col-6 col-md-5">
+                <div class="d-flex justify-content-between mb-1">
+                    <span>Subtotal:</span>
+                    <span>₹{{ "%.2f"|format(order.subtotal) }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-1">
+                    <span>GST (18%):</span>
+                    <span>₹{{ "%.2f"|format(order.gst) }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-1">
+                    <span>Delivery:</span>
+                    <span>₹{{ "%.2f"|format(order.delivery) }}</span>
+                </div>
+                <hr class="my-2">
+                <div class="d-flex justify-content-between fw-bold fs-5">
+                    <span>Total:</span>
+                    <span>₹{{ "%.2f"|format(order.grand_total) }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-5 text-center small text-muted">
+            <p>Thank you for choosing DHUKANDHAR: The Revenge.</p>
+            <p class="m-0">This is a computer generated receipt.</p>
+        </div>
+    </div>
+
+    <div class="mt-4 mb-5">
+        <button onclick="window.print()" class="btn btn-outline-warning px-4 rounded-pill me-2"><i class="fa-solid fa-print me-2"></i>Print Receipt</button>
+        <a href="/orders" class="btn btn-secondary me-2 px-4 rounded-pill" style="background: rgba(153, 0, 0, 0.4); color: #FFE5CC; border: 1px solid rgba(230, 184, 0, 0.5);">Returns & Orders</a>
+        <a href="/" class="btn btn-dhukandhar px-4 rounded-pill">Continue Shopping</a>
+    </div>
+
+    <style>
+        @media print {
+            body * { visibility: hidden; }
+            #formalReceipt, #formalReceipt * { visibility: visible; }
+            #formalReceipt { position: absolute; left: 0; top: 0; width: 100%; border: none !important; box-shadow: none !important; margin: 0; padding: 20px; }
+            .navbar, .d-print-none, #mamuIcon, #yalinaIcon { display: none !important; }
+        }
+    </style>
+
+</div>
+
+<!-- Simple JS Confetti -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script>
+    window.onload = function() {
+        var duration = 3 * 1000;
+        var animationEnd = Date.now() + duration;
+        var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+        function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+        var interval = setInterval(function() {
+            var timeLeft = animationEnd - Date.now();
+            if (timeLeft <= 0) { return clearInterval(interval); }
+            var particleCount = 50 * (timeLeft / duration);
+            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+        }, 250);
+    }
+</script>
+{% endblock %}
